@@ -33,12 +33,7 @@ def post_task():
     db.session.add(task)
     db.session.commit()
     return jsonify({"message": "Task created successfully",
-                    "task": {
-                        "id": task.id,
-                        "title": task.title,
-                        "description": task.description,
-                        "completed": task.completed
-                    }}), 201
+                    "task": task.to_dict()}), 201
 
 
 @task_bp.route('/<int:task_id>', methods=['PUT'])
@@ -57,12 +52,7 @@ def put_task(task_id):
     db.session.commit()
 
     return jsonify({"message": "Task updated successfully",
-                    "task": {
-                        "id": task.id,
-                        "title": task.title,
-                        "description": task.description,
-                        "completed": task.completed
-                    }}), 200
+                    "task": task.to_dict()}), 200
 
 
 @task_bp.route('/<int:task_id>', methods=['DELETE'])
