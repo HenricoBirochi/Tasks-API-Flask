@@ -10,18 +10,24 @@ task_bp = Blueprint('task_bp', __name__, url_prefix='/tasks')
 def get_tasks():
     tasks = Task.query.all()
     if not tasks:
-        return jsonify({'error': 'No tasks found'}), 200
+        return jsonify({'message': 'No tasks found'}), 200
     
-    tasks_result = []
-    for task in tasks:
-        tasks_result.append({
-            'id': task.id,
-            'title': task.title,
-            'description': task.description,
-            'completed': task.completed
-        })
-    
-    return jsonify(tasks_result), 200
+    tasks_result = [task.to_dict() for task in tasks]
+
+    output = {
+        "tasks": tasks_result,
+        "total_tasks": len(tasks_result)
+    }
+
+    return jsonify(output), 200
+
+
+@task_bp.route('/<int:task_id>', methods=['GET'])
+def get_task(task_id):
+    task = Task.query.get(task_id)
+    if not task:
+        return jsonify({'errors': 'Task not found'}), 404
+    return jsonify(task.to_dict()), 200
 
 
 @task_bp.route('', methods=['POST'])
@@ -32,8 +38,13 @@ def post_task():
     task = Task(title=data['title'], description=data['description'])
     db.session.add(task)
     db.session.commit()
-    return jsonify({"message": "Task created successfully",
-                    "task": task.to_dict()}), 201
+
+    output = {
+        "message": "Task created successfully",
+        "task": task.to_dict()
+    }
+
+    return jsonify(output), 201
 
 
 @task_bp.route('/<int:task_id>', methods=['PUT'])
