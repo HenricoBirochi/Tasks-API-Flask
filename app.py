@@ -1,6 +1,6 @@
 from flask import Flask
 from extensions import db
-from controller.task_controller import task_bp
+from controllers.task_controller import task_bp
 
 # Configuração do app Flask
 app = Flask(__name__)
